@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import json
 
 # Base URL of the CMPUT course catalogue
-BASE_URL = "https://apps.ualberta.ca/catalogue/course/cmput"
+BASE_URL = "https://apps.ualberta.ca/catalogue/course/stat"
 
 # Function to scrape CMPUT courses
 def scrape_cmput_courses():
@@ -48,7 +48,7 @@ def main():
         print("Warning: No courses found. Check the selectors.")
     
     # Save to JSON
-    with open('cmput_courses.json', 'w', encoding='utf-8') as file:
+    with open('stat_courses.json', 'w', encoding='utf-8') as file:
         json.dump(courses, file, indent=4)
     
     print("Scraping completed. Data saved to cmput_courses.json")
