@@ -1,1 +1,2 @@
-# batak-sort
+# Ualberta Study buddy 
+# Made by team Bataksort
