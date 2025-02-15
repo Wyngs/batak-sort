@@ -1,2 +1,2 @@
-# Ualberta Study buddy 
-# Made by team Bataksort
+# BearSmart
+# Made by team Bataksort ( Ryan, Harshit, Mayank, Tri)
