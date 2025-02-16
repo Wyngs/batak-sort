@@ -3,6 +3,7 @@ import Home from './pages/Home'
 import Search from './pages/Search'
 import Calendar from './pages/Calendar'
 import Resource from './pages/Resource'
+import Advisor from './pages/Advisor'
 import './App.css'
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
       <Route path="/search" element={<Search />} />
       <Route path="/calendar" element={<Calendar />} />
       <Route path="/resource" element={<Resource />} />
+      <Route path="/advisor" element={<Advisor />} />
     </Routes>
   )
 }
