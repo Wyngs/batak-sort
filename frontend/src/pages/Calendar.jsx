@@ -207,6 +207,7 @@ export default function Calendar() {
     <ul className="hidden md:flex space-x-10 font-semibold text-xl">
       <li><Link to="/" className="hover:text-yellow-500 transition duration-200">Home</Link></li>
       <li><Link to="/search" className="hover:text-yellow-500 transition duration-200">Search</Link></li>
+      <li><Link to="/resource" className="hover:text-yellow-500 transition duration-200">Resource</Link></li>
     </ul>
   </div>
 
@@ -226,6 +227,13 @@ export default function Calendar() {
         onClick={() => setIsMenuOpen(false)}
       >
         Search
+      </Link>
+      <Link 
+        to="/resource" 
+        className="block py-2 text-center text-yellow-300 hover:bg-green-900 rounded transition duration-200"
+        onClick={() => setIsMenuOpen(false)}
+      >
+        Resource
       </Link>
     </div>
   </div>
