@@ -127,6 +127,7 @@ export default function Search() {
               <ul className="hidden md:flex space-x-10 font-semibold text-xl">
                 <li><Link to="/" className="hover:text-yellow-500 transition duration-200">Home</Link></li>
                 <li><Link to="/calendar" className="hover:text-yellow-500 transition duration-200">Calendar</Link></li>
+                <li><Link to="/resource" className="hover:text-yellow-500 transition duration-200">Resource</Link></li>
               </ul>
             </div>
 
@@ -146,6 +147,13 @@ export default function Search() {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Calendar
+                </Link>
+                <Link 
+                  to="/resource" 
+                  className="block py-2 text-center text-yellow-300 hover:bg-green-900 rounded transition duration-200"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Resource
                 </Link>
               </div>
             </div>
