@@ -44,7 +44,7 @@ const categories = [
       'MyCCID',
       'ONECard Account',
       'Student Union',
-      'University Map',
+      'Uni Map',
       'Events Finder',
       'Careers',
     ],
@@ -76,11 +76,11 @@ export default function Resource() {
     { name: 'Eclass', icon: <img src={getImage('eclass.png')} alt="Eclass" className="w-8 h-8" />, url: 'https://eclass.srv.ualberta.ca/portal/' },
     { name: 'Bear Tracks', icon: <img src={getImage('beartracks.png')} alt="Bear Tracks" className="w-8 h-8" />, url: 'https://www.beartracks.ualberta.ca/' },
     { name: 'Canvas', icon: <img src={getImage('canvas.png')} alt="Canvas" className="w-8 h-8" />, url: 'https://canvas.ualberta.ca/' },
-    { name: 'Library', icon: null, url: 'https://www.library.ualberta.ca/' },
+    { name: 'Library', icon: <img src={getImage('library.png')} alt="Library" className="w-8 h-8" />, url: 'https://www.library.ualberta.ca/' },
     { name: 'Prof Finder', icon: <img src={getImage('magnifying-glass.png')} alt="Prof Finder" className="w-8 h-8" />, url: 'https://apps.ualberta.ca/directory' },
-    { name: 'Events Finder', icon: null, url: 'https://www.ualberta.ca/events/index.html' },
-    { name: 'University Map', icon: null, url: 'https://www.ualberta.ca/maps.html' },
-    { name: 'Careers', icon: null, url: 'https://www.ualberta.ca/en/careers.html' },
+    { name: 'Events Finder', icon: <img src={getImage('upcoming-events.png')} alt="Prof Finder" className="w-8 h-8" />, url: 'https://www.ualberta.ca/events/index.html' },
+    { name: 'Uni Map', icon: <img src={getImage('maps.png')} alt="Uni Map" className="w-8 h-8" />, url: 'https://www.ualberta.ca/maps.html' },
+    { name: 'Careers', icon: <img src={getImage('careers.png')} alt="Careers" className="w-8 h-8" />, url: 'https://www.ualberta.ca/en/careers.html' },
     { name: 'Student Union', icon: null, url: 'https://www.su.ualberta.ca/' },
     { name: 'Academic Success', icon: null, url: 'https://www.ualberta.ca/en/campus-life/academic-success/index.html' },
     { name: 'BearsDen', icon: null, url: 'https://alberta.campuslabs.ca/engage/' },
@@ -92,7 +92,7 @@ export default function Resource() {
     { name: 'ONECard Account', icon: null, url: 'https://www.ualberta.ca/en/onecard/index.html' },
     { name: 'MyCCID', icon: null, url: 'https://myccid.ualberta.ca/' },
     { name: 'Peer Tutors', icon: null, url: 'https://www.ualberta.ca/en/residence/community-life/academic-support/peer-tutors.html' },
-    { name: 'Tutor Listing', icon: null, url: 'https://www2.su.ualberta.ca/services/infolink/tutor/registry/browse/2/' },
+    { name: 'Tutor Listing', icon: <img src={getImage('tutor-list.png')} alt="Tutor Listing" className="w-8 h-8" />, url: 'https://www2.su.ualberta.ca/services/infolink/tutor/registry/browse/2/' },
   ];
 
   // 4. Filter by search
