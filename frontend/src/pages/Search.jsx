@@ -1,10 +1,11 @@
-import { Link } from 'react-router-dom'
-import { useState, useEffect } from 'react'
-import logo from "../assets/UofAlogo.png" 
-import examData from '../../../constants/Fall24FinalSchedule.json'
-import { AddToCalendarButton } from 'add-to-calendar-button-react';
+import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import logo from "../assets/UofAlogo.png";
+import examData from "../../../constants/Fall24FinalSchedule.json";
 
-
+function getRandom(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 const setCookie = (name, value, days) => {
   try {
@@ -13,381 +14,383 @@ const setCookie = (name, value, days) => {
     document.cookie = `${name}=${JSON.stringify(value)};expires=${expires.toUTCString()};path=/;SameSite=Strict`;
     return true;
   } catch (error) {
-    console.error('Error setting cookie:', error);
+    console.error("Error setting cookie:", error);
     return false;
   }
 };
-
 const getCookie = (name) => {
   try {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) {
-      const cookieValue = parts.pop().split(';').shift();
+      const cookieValue = parts.pop().split(";").shift();
       return JSON.parse(cookieValue);
     }
     return null;
   } catch (error) {
-    console.error('Error getting cookie:', error);
+    console.error("Error getting cookie:", error);
     return null;
   }
 };
 
-export default function Search() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [savedExams, setSavedExams] = useState([]);
-  const [showPopup, setShowPopup] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
+const CHUNK_SIZE = 8;
 
-  // Load saved exams from cookies on component mount
+export default function Finals() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [savedExams, setSavedExams] = useState([]);
+  const [chunksToShow, setChunksToShow] = useState(1); // 1 chunk => 8 rows
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // This holds random blob positions for each chunk
+  // chunkBlobs[i] => an array of random { top, left, duration } for chunk i
+  const [chunkBlobs, setChunkBlobs] = useState([]);
+
   useEffect(() => {
-    const savedExamsData = getCookie('savedExams');
+    // On mount:
+    // 1) Make 5 random blobs for chunk #1
+    // 2) Load savedExams from cookie
+    setChunkBlobs([generateBlobs(5)]);
+    const savedExamsData = getCookie("savedExams");
     if (savedExamsData) {
       setSavedExams(savedExamsData);
     }
   }, []);
 
-// Extract the search term from the URL query parameter and set it to the searchTerm state
+  function generateBlobs(count) {
+    const arr = [];
+    for (let i = 0; i < count; i++) {
+      arr.push({
+        top: getRandom(5, 80),    // random 5%–80% vertically
+        left: getRandom(5, 80),   // random 5%–80% horizontally
+        duration: getRandom(15, 25) // 15–25s
+      });
+    }
+    return arr;
+  }
+
+  function handleShowMore() {
+    // Each time we show another chunk
+    setChunksToShow(chunksToShow + 1);
+
+    // Generate new random blobs for the next chunk
+    const newBlobs = generateBlobs(5);
+    setChunkBlobs([...chunkBlobs, newBlobs]);
+  }
+
+  // Extract searchTerm from URL
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const courseQuery = params.get('course') || ''; // Default to empty if no query
+    const courseQuery = params.get("course") || "";
     setSearchTerm(courseQuery);
   }, [location]);
 
-
-
-  // Save exams to cookies whenever savedExams changes
+  // Save to cookies
   useEffect(() => {
     if (savedExams.length > 0) {
-      setCookie('savedExams', savedExams, 30); // 30 days
+      setCookie("savedExams", savedExams, 30);
     } else {
-      document.cookie = 'savedExams=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      document.cookie =
+        "savedExams=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     }
   }, [savedExams]);
 
-
+  // Toggle
   const handleToggleExam = (exam) => {
     const isExamSaved = savedExams.some(
-      saved => saved[0] === exam[0] && saved[1] === exam[1]
-    )
-    
+      (saved) => saved[0] === exam[0] && saved[1] === exam[1]
+    );
     if (isExamSaved) {
-      // Remove exam
-      setSavedExams(savedExams.filter(
-        saved => !(saved[0] === exam[0] && saved[1] === exam[1])
-      ))
+      setSavedExams(
+        savedExams.filter(
+          (saved) => !(saved[0] === exam[0] && saved[1] === exam[1])
+        )
+      );
     } else {
-      // Add exam
-      setSavedExams([...savedExams, exam])
+      setSavedExams([...savedExams, exam]);
     }
-  }
+  };
 
-  
+  // Filter data
+  const filteredData = examData.data.slice(1).filter((row) =>
+    row[0]?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  // total chunks possible
+  const totalChunks = Math.ceil(filteredData.length / CHUNK_SIZE);
+  // how many rows to show
+  const rowsToShow = chunksToShow * CHUNK_SIZE;
+  const visibleRows = filteredData.slice(0, rowsToShow);
+  const canShowMore = chunksToShow < totalChunks;
 
-  // Filter data based on search term
-  const filteredData = examData.data.slice(1).filter(row => {
-    return row[0]?.toLowerCase().includes(searchTerm.toLowerCase())
-  })
+  return (
+    <div className="relative min-h-screen flex flex-col text-white overflow-hidden font-apple">
+      {/* 
+        1) Dark gradient background 
+        No extra lumps up top if we want. Just the base gradient. 
+      */}
+      <div className="absolute inset-0 -z-10">
+        <div className="h-full w-full bg-gradient-to-b from-[#004022] to-[#001a0f]" />
+      </div>
 
-  return (  
-    
-    <div className="min-h-screen flex flex-col bg-green-700 overflow-x-hidden">
-    
-          {/* Navbar */}
-          <nav className="w-full bg-green-800 text-yellow-300 px-4 md:px-8 py-4">
-            <div className="max-w-full mx-auto flex items-center justify-between">
-              <div className="flex items-center">
-                 
-                <Link to="/" className="flex items-center">
-                  <img src={logo} alt="UofA Logo" className="w-10 h-10 md:w-14 md:h-14 mr-4" />
-                  <span className="font-bold text-lg md:text-xl">UofA Scheduler</span>
-                  </Link>
-              </div>
 
-              {/* Mobile menu button */}
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="md:hidden text-yellow-300 focus:outline-none"
-              >
-                <svg 
-                  className="w-6 h-6" 
-                  fill="none" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth="2" 
-                  viewBox="0 0 24 24" 
-                  stroke="currentColor"
-                >
-                  <path d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}></path>
-                </svg>
-              </button>
-
-              {/* Desktop navigation */}
-              <ul className="hidden md:flex space-x-10 font-semibold text-xl">
-                <li><Link to="/" className="hover:text-yellow-500 transition duration-200">Home</Link></li>
-                <li><Link to="/calendar" className="hover:text-yellow-500 transition duration-200">Calendar</Link></li>
-                <li><Link to="/resource" className="hover:text-yellow-500 transition duration-200">Resource</Link></li>
-              </ul>
-            </div>
-
-            {/* Mobile menu dropdown */}
-            <div className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'} pt-4`}>
-              <div className="flex flex-col space-y-3">
-                <Link 
-                  to="/" 
-                  className="block py-2 text-center text-yellow-300 hover:bg-green-900 rounded transition duration-200"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Home
-                </Link>
-                <Link 
-                  to="/calendar" 
-                  className="block py-2 text-center text-yellow-300 hover:bg-green-900 rounded transition duration-200"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Calendar
-                </Link>
-                <Link 
-                  to="/advisor" 
-                  className="block py-2 text-center text-yellow-300 hover:bg-green-900 rounded transition duration-200"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Advisor
-                </Link>
-                <Link 
-                  to="/resource" 
-                  className="block py-2 text-center text-yellow-300 hover:bg-green-900 rounded transition duration-200"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Resource
-                </Link>
-              </div>
-            </div>
-          </nav>
-
-    <div className='p-4'>
-      <h1 className='font-bold text-2xl pb-3 text-yellow-300'>Search and add! All added courses are displayed in the Calender 📅</h1>
-
-      {/* <div className="mb-4">
-        <button
-          onClick={() => setShowPopup(true)}
-          className="w-full md:w-auto py-2 px-4 rounded-md font-bold bg-yellow-400 text-black hover:bg-yellow-500 active:scale-95 transition-transform duration-150"
-        >
-          Add Your Exam
-        </button>
-      </div> */}
-
-      {/* Popup Window */}
-      {showPopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-green-700 rounded-lg p-6 w-full max-w-md">
-            <h2 className="text-2xl font-bold mb-4 text-white">Add New Exam</h2>
-            <form onSubmit={handleAddNewExam}>
-              <div className="mb-4">
-                <input
-                  type="text"
-                  placeholder="Course (e.g., CMPUT 175)"
-                  className={`w-full p-2 rounded ${errors.course ? 'border-2 border-red-500' : ''}`}
-                  value={newExam.course}
-                  onChange={(e) => {
-                    setNewExam({...newExam, course: e.target.value});
-                    setErrors({...errors, course: ''});
-                  }}
-                  required
-                />
-                {errors.course && <p className="text-red-500 text-sm mt-1">{errors.course}</p>}
-              </div>
-              <div className="mb-4">
-                <input
-                  type="text"
-                  placeholder="Section"
-                  className={`w-full p-2 rounded ${errors.section ? 'border-2 border-red-500' : ''}`}
-                  value={newExam.section}
-                  onChange={(e) => {
-                    setNewExam({...newExam, section: e.target.value});
-                    setErrors({...errors, section: ''});
-                  }}
-                  required
-                />
-                {errors.section && <p className="text-red-500 text-sm mt-1">{errors.section}</p>}
-              </div>
-              <input
-                type="text"
-                placeholder="Date (MM/DD/YYYY)"
-                className={`w-full mb-2 p-2 rounded ${errors.date ? 'border-2 border-red-500' : ''}`}
-                value={newExam.date}
-                onChange={(e) => {
-                  setNewExam({...newExam, date: e.target.value});
-                  setErrors({...errors, date: ''});
-                }}
-                required
-              />
-              {errors.date && <p className="text-red-500 text-sm mt-1">{errors.date}</p>}
-              <input
-                type="text"
-                placeholder="Time"
-                className={`w-full mb-2 p-2 rounded ${errors.time ? 'border-2 border-red-500' : ''}`}
-                value={newExam.time}
-                onChange={(e) => {
-                  setNewExam({...newExam, time: e.target.value});
-                  setErrors({...errors, time: ''});
-                }}
-                required
-              />
-              {errors.time && <p className="text-red-500 text-sm mt-1">{errors.time}</p>}
-              <input
-                type="text"
-                placeholder="Length"
-                className={`w-full mb-2 p-2 rounded ${errors.length ? 'border-2 border-red-500' : ''}`}
-                value={newExam.length}
-                onChange={(e) => {
-                  setNewExam({...newExam, length: e.target.value});
-                  setErrors({...errors, length: ''});
-                }}
-                required
-              />
-              {errors.length && <p className="text-red-500 text-sm mt-1">{errors.length}</p>}
-              <input
-                type="text"
-                placeholder="Completion Window"
-                className={`w-full mb-2 p-2 rounded ${errors.window ? 'border-2 border-red-500' : ''}`}
-                value={newExam.window}
-                onChange={(e) => {
-                  setNewExam({...newExam, window: e.target.value});
-                  setErrors({...errors, window: ''});
-                }}
-                required
-              />
-              {errors.window && <p className="text-red-500 text-sm mt-1">{errors.window}</p>}
-              <input
-                type="text"
-                placeholder="Location"
-                className={`w-full mb-4 p-2 rounded ${errors.location ? 'border-2 border-red-500' : ''}`}
-                value={newExam.location}
-                onChange={(e) => {
-                  setNewExam({...newExam, location: e.target.value});
-                  setErrors({...errors, location: ''});
-                }}
-                required
-              />
-              {errors.location && <p className="text-red-500 text-sm mt-1">{errors.location}</p>}
-              <div className="flex gap-2">
-                <button
-                  type="submit"
-                  className="flex-1 py-2 rounded-md font-bold bg-yellow-400 text-black hover:bg-yellow-500 active:scale-95 transition-transform duration-150"
-                >
-                  Add Exam
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowPopup(false)}
-                  className="flex-1 py-2 rounded-md font-bold bg-red-500 text-white hover:bg-red-600 active:scale-95 transition-transform duration-150"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+      <nav className="w-full bg-transparent-800 py-4">
+        <div className="max-w-6xl mx-auto px-4 md:px-8 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <img
+              src={logo}
+              alt="UAlberta"
+              className="w-10 h-10 object-contain"
+            />
+            <span className="font-bold text-2xl md:text-3xl">BearSmart</span>
           </div>
+
+          <div className="hidden md:flex items-center space-x-8 font-semibold text-white">
+            <Link to="/" className="hover:text-yellow-100 transition">
+              Home
+            </Link>
+            <Link to="/calendar" className="hover:text-yellow-100 transition">
+              Calendar
+            </Link>
+            <Link to="/resource" className="hover:text-yellow-100 transition">
+              Resource
+            </Link>
+            <Link to="/advisor" className="hover:text-yellow-100 transition">
+              Advisor
+            </Link>
+          </div>
+
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden focus:outline-none"
+          >
+            <svg
+              className="w-7 h-7"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path
+                d={
+                  isMenuOpen
+                    ? "M6 18L18 6M6 6l12 12"
+                    : "M4 6h16M4 12h16M4 18h16"
+                }
+              />
+            </svg>
+          </button>
         </div>
-      )}
 
-      {/* Search input */}
-      <div className="mb-4 w-full">
-        <input
-          type="text"
-          placeholder="Search by course name..."
-          className="w-full p-2 border border-gray-300 rounded"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-
-      {/* Scrollable table container */}
-      <div className="overflow-x-auto hidden md:block">
-        <table className="min-w-full border-collapse border border-green-700 text-white font-bold text-left">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border border-gray-200 px-4 py-2 bg-green-700">Course</th>
-              <th className="border border-gray-200 px-4 py-2 bg-green-700">Section</th>
-              <th className="border border-gray-200 px-4 py-2 bg-green-700">Date</th>
-              <th className="border border-gray-200 px-4 py-2 bg-green-700">Time</th>
-              <th className="border border-gray-200 px-4 py-2 bg-green-700">Length</th>
-              <th className="border border-gray-200 px-4 py-2 bg-green-700">Completion Window</th>
-              <th className="border border-gray-200 px-4 py-2 bg-green-700">Location</th>
-              <th className="border border-gray-200 px-4 py-2 bg-green-700">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredData.map((row, index) => (
-              <tr key={index} className="hover:bg-gray-50 text-white font-bold hover:text-yellow-300 hover:font-bold hover:bg-lime-800">
-                <td className="border border-gray-200 px-4 py-2">{row[0]}</td>
-                <td className="border border-gray-200 px-4 py-2">{row[1]}</td>
-                <td className="border border-gray-200 px-4 py-2">{row[2]}</td>
-                <td className="border border-gray-200 px-4 py-2">{row[3]}</td>
-                <td className="border border-gray-200 px-4 py-2">{row[4]}</td>
-                <td className="border border-gray-200 px-4 py-2">{row[5]}</td>
-                <td className="border border-gray-200 px-4 py-2">{row[6]}</td>
-                <td className="border border-gray-200 px-4 py-2">
-                <button
-                  onClick={() => handleToggleExam(row)}
-                  className={`w-full py-2 rounded-md font-bold ${
-                    savedExams.some(saved => saved[0] === row[0] && saved[1] === row[1])
-                      ? 'bg-sky-500 text-white hover:bg-sky-600'
-                      : 'bg-yellow-400 text-black hover:bg-yellow-500'
-                  } active:scale-95 transition-transform duration-150 mb-2`}
-                >
-                  {savedExams.some(saved => saved[0] === row[0] && saved[1] === row[1]) ? 'Added' : 'Add Exam'}
-                </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Tile-based format for mobile */}
-      <div className="md:hidden">
-        {filteredData.map((row, index) => (
-          <div key={index} className="border border-green-700 rounded-lg p-4 mb-4 bg-[#e9e9e9] text-green-800 shadow-md hover:bg-gray-200">
-            <div className="flex flex-col items-center text-center">
-              <div className="mb-2 text-lg font-bold">
-                {row[0]} - {row[1]}
-              </div>
-              <div className="mb-2">
-                <strong>Date:</strong> {row[2]}
-              </div>
-              <div className="mb-2">
-                <strong>Time:</strong> {row[3]}
-              </div>
-              <div className="mb-2">
-                <strong>Length:</strong> {row[4]}
-              </div>
-              <div className="mb-2">
-                <strong>Completion Window:</strong> {row[5]}
-              </div>
-              <div className="mb-3">
-                <strong>Location:</strong> {row[6]}
-              </div>
-              <button
-                onClick={() => handleToggleExam(row)}
-                className={`w-full py-2 rounded-md font-bold ${
-                  savedExams.some(saved => saved[0] === row[0] && saved[1] === row[1])
-                    ? 'bg-green-500 text-white hover:bg-green-600'
-                    : 'bg-yellow-400 text-black hover:bg-yellow-500'
-                } active:scale-95 transition-transform duration-150 mb-2`}
-              >
-                {savedExams.some(saved => saved[0] === row[0] && saved[1] === row[1]) ? 'Added' : 'Add Exam'}
-              </button>
-              
-              <div className="w-full">
-              </div>
+        {isMenuOpen && (
+          <div className=" md:hidden mt-2 bg-white/10 backdrop-blur-sm rounded p-4 max-w-6xl mx-auto">
+            <div className="flex flex-col space-y-3 font-semibold">
+              <Link to="/" onClick={() => setIsMenuOpen(false)}>
+                Home
+              </Link>
+              <Link to="/calendar" onClick={() => setIsMenuOpen(false)}>
+                Calendar
+              </Link>
+              <Link to="/resource" onClick={() => setIsMenuOpen(false)}>
+                Resource
+              </Link>
+              <Link to="/advisor" onClick={() => setIsMenuOpen(false)}>
+                Advisor
+              </Link>
             </div>
           </div>
-        ))}
+        )}
+      </nav>
+
+      {/* 
+        3) Main content
+      */}
+      <div className="relative z-10 mt-8 max-w-6xl mx-auto px-4 md:px-8 w-full">
+        <h1 className="font-bold text-3xl text-yellow-300 mb-3">Final Exams</h1>
+        <p className="text-yellow-100 mb-6">
+          Showing {Math.min(visibleRows.length, filteredData.length)} of{" "}
+          {filteredData.length} results
+        </p>
+
+        {/* Search bar */}
+        <div className="mb-6">
+          <input
+            type="text"
+            placeholder="Search by course name..."
+            className="relative z-10 w-full max-w-xl px-4 py-2 rounded-md text-black focus:outline-none"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        {/*
+          4) Single table with N rows 
+        */}
+        <div className="relative z-10 overflow-hidden rounded-xl bg-white/35 backdrop-blur-sm">
+  <table className="w-full text-white font-semibold">
+    {/* 
+      1) Hide the header on mobile (below “md”).
+         => "hidden md:table-header-group" 
+    */}
+    <thead className="bg-white/40 hidden md:table-header-group">
+      <tr>
+        <th className="px-4 py-3 border-b border-white/20">Course</th>
+        <th className="px-4 py-3 border-b border-white/20">Section</th>
+        <th className="px-4 py-3 border-b border-white/20">Date</th>
+        <th className="px-4 py-3 border-b border-white/20">Time</th>
+        <th className="px-4 py-3 border-b border-white/20">Length</th>
+        <th className="px-4 py-3 border-b border-white/20">Window</th>
+        <th className="px-4 py-3 border-b border-white/20">Location</th>
+        <th className="px-4 py-3 border-b border-white/20">Status</th>
+      </tr>
+    </thead>
+
+    {/* 
+      2) Tbody: Each row is "block" on mobile so columns stack.
+         => "block md:table-row"
+         Then each <td> is also block on mobile => "block md:table-cell"
+         We add an inline label that is only visible on mobile => "font-bold md:hidden"
+    */}
+    <tbody>
+    {visibleRows.map((row, i) => {
+    // Check if row is in savedExams
+    const isSaved = savedExams.some(
+      (saved) => saved[0] === row[0] && saved[1] === row[1]
+    );
+        return (
+          <tr
+            key={i}
+            className="
+              md:table-row
+              block 
+              mb-4 
+              md:mb-0
+              border-b border-white/20
+              last:border-b-0 
+              hover:bg-white/10
+              transition
+            "
+          >
+            {/* 
+              Course 
+              On mobile: label "Course: " 
+              On desktop: it's just the cell under the header. 
+            */}
+            <td className="px-4 py-2 block md:table-cell">
+              <span className="font-bold md:hidden">Course: </span>
+              {row[0]}
+            </td>
+
+            {/* Section */}
+            <td className="px-4 py-2 block md:table-cell">
+              <span className="font-bold md:hidden">Section: </span>
+              {row[1]}
+            </td>
+
+            {/* Date */}
+            <td className="px-4 py-2 block md:table-cell">
+              <span className="font-bold md:hidden">Date: </span>
+              {row[2]}
+            </td>
+
+            {/* Time */}
+            <td className="px-4 py-2 block md:table-cell">
+              <span className="font-bold md:hidden">Time: </span>
+              {row[3]}
+            </td>
+
+            {/* Length */}
+            <td className="px-4 py-2 block md:table-cell">
+              <span className="font-bold md:hidden">Length: </span>
+              {row[4]}
+            </td>
+
+            {/* Window */}
+            <td className="px-4 py-2 block md:table-cell">
+              <span className="font-bold md:hidden">Window: </span>
+              {row[5]}
+            </td>
+
+            {/* Location */}
+            <td className="px-4 py-2 block md:table-cell">
+              <span className="font-bold md:hidden">Location: </span>
+              {row[6]}
+            </td>
+
+            {/* Status => Add Exam button */}
+            <td className="px-4 py-2 block md:table-cell">
+              <span className="font-bold md:hidden">Status: </span>
+              <button
+               onClick={() => handleToggleExam(row)}
+                className={`
+                  w-36 py-2 
+                  rounded-md 
+                  font-bold 
+                  active:scale-95 
+                  transition-transform
+                  ${
+                    isSaved
+                      ? "bg-green-800 text-white hover:bg-green-700"
+                      : "bg-white/20 text-green-900 hover:bg-white/30"
+                  }
+                `}
+              >
+                {isSaved ? "Added" : "Add Exam"}
+              </button>
+            </td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+</div>
+
+
+
+
+        {/* 5) Render random blobs behind each chunk */}
+        {Array.from({ length: chunksToShow }).map((_, chunkIndex) => {
+          // chunkBlobs[chunkIndex] => an array of random positions
+          const arr = chunkBlobs[chunkIndex] || [];
+          return (
+            <div key={chunkIndex} className="chunk-blobs">
+              {arr.map((b, i) => (
+                <div
+                  key={i}
+                  className="blob bg-yellow-400"
+                  style={{
+                    top: `${b.top}%`,
+                    left: `${b.left}%`,
+                    animationDuration: `${b.duration}s`,
+                  }}
+                />
+              ))}
+            </div>
+          );
+        })}
+
+        {/* If there's more to show, a partial fade & button */}
+        {canShowMore && (
+  <div className="flex justify-center items-center mt-6">
+    <button
+      onClick={handleShowMore}
+      className="
+        show-more-button
+        relative
+        text-white
+        px-10 py-3
+        rounded-md
+        border border-white/60
+        bg-transparent
+        font-semibold
+        overflow-hidden
+      "
+    >
+      Show more
+    </button>
+  </div>
+)}
       </div>
-    </div>
     </div>
   );
-};
-
+}

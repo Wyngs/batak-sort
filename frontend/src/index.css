@@ -3,28 +3,242 @@
 @tailwind utilities;
 
 
+.font-apple {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+}
 
-.moving-gradient {
-    background: linear-gradient(270deg, #007C41, #FFDB05, #007C41);
+.chunk-blobs {
+  position: absolute; 
+  /* so it doesn’t push the table down */
+  inset: 0; 
+  z-index: 0; 
+  pointer-events: none; 
+}
 
-    background-size: 600% 600%;
-    animation: gradient-animation 8s ease infinite;
-  }
-  
-  @keyframes gradient-animation {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
+.fade-out-gradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4rem; /* how tall the fade is */
+  background: linear-gradient(
+    rgba(0, 0, 0, 0),
+    rgba(0, 0, 0, 0.7)
+  );
+}
 
-  @keyframes float-up-down {
-    0%,100% { transform: translateY(0); }
-    50%     { transform: translateY(-20px); }
+
+
+
+.animate-float-up-down {
+  animation: float-up-down 3.5s ease-in-out infinite;
+}
+
+@keyframes float-up-down {
+  0%, 100% {
+    transform: translateY(0);
   }
-  
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+
+.oval-shadow {
+  position: absolute;
+  bottom: 0;
+  width: 120px;
+  height: 40px;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+  filter: blur(8px);
+  animation: oval-shadow-pulse 3.5s ease-in-out infinite;
+}
+
+@keyframes oval-shadow-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.7);
+    opacity: 0.7;
+  }
+}
+
+
+.arrow-button {
+  color: white;            /* text color remains white */
+  background-color: black; /* always black */
+  position: relative;      /* needed so we can position the arrow */
+  transition: background-color 0.2s;
+}
+.arrow-button:hover {
+  background-color: black; /* override any tailwind hover color change */
+}
+
+.arrow-button::after {
+  content: "→";
+  position: absolute;
+  right: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%) translateX(0);
+  opacity: 0; 
+  transition: opacity 0.2s;
+}
+.arrow-button:hover::after {
+  opacity: 1;
+  animation: arrow-wiggle 0.6s infinite alternate;
+}
+
+@keyframes arrow-wiggle {
+  0% {
+    transform: translateY(-50%) translateX(0);
+  }
+  100% {
+    transform: translateY(-50%) translateX(6px);
+  }
+}
+
+
+.blobs-container {
+  position: relative;
+}
+
+.blob {
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: blob-move 18s infinite alternate ease-in-out;
+  opacity: 0.6;
+  mix-blend-mode: screen;
+}
+
+/* Example positions/durations */
+.blob1 {
+  top: 10%;
+  left: 15%;
+  animation-duration: 20s;
+}
+.blob2 {
+  top: 25%;
+  left: 60%;
+  animation-duration: 22s;
+}
+.blob3 {
+  top: 50%;
+  left: 25%;
+  animation-duration: 19s;
+}
+.blob4 {
+  top: 70%;
+  left: 40%;
+  animation-duration: 21s;
+}
+.blob5 {
+  top: 15%;
+  left: 75%;
+  animation-duration: 25s;
+}
+.blob6 {
+  top: 45%;
+  left: 10%;
+  animation-duration: 23s;
+}
+.blob7 {
+  top: 80%;
+  left: 75%;
+  animation-duration: 24s;
+}
+.blob8 {
+  top: 60%;
+  left: 55%;
+  animation-duration: 26s;
+}
+
+@keyframes blob-move {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(120px, -80px) scale(1.2);
+  }
+  50% {
+    transform: translate(-100px, 140px) scale(0.9);
+  }
+  75% {
+    transform: translate(80px, 180px) scale(1.3);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+/* 
+  1) Frosted add button 
+     (Though you can use Tailwind classes directly,
+     here's a class if you want to tweak more.)
+*/
+.frosted-add-button {
+  backdrop-filter: blur(5px);
+  background-color: rgba(255,255,255,0.2); 
+  /* Slightly frosted look */
+  color: #046307; /* a dark green text, if you like */
+}
+
+/* 
+  2) "Show more" button. 
+     We'll make the arrow "V" bounce up & down. 
+*/
+.show-more-button {
+  background-color: transparent; /* see-through */
+  color: white; 
+  border: 2px solid rgba(255,255,255,0.6);
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  transition: background-color 0.2s;
+}
+
+.show-more-button::after {
+  content: "↓";
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: bold;
+  animation: arrow-bob 1s infinite alternate;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.show-more-button:hover::after {
+  opacity: 1;
+}
+@keyframes arrow-bob {
+  0% { transform: translateY(-50%); }
+  100% { transform: translateY(-50%) translateY(5px); }
+}
+
+/* 
+  3) If you want the table corners even more rounded, 
+     override or add .rounded-2xl or .rounded-xl 
+  or in custom css:
+.table-frosted {
+  border-radius: 1rem;
+  overflow: hidden;
+}
+*/
+
+/* 
+  4) If you want more control of the table header color:
+  you can define something like:
+*/
+.frosted-table thead tr {
+  background-color: rgba(255,255,255,0.3);
+  color: #145214; /* or a dark green text color */
+  backdrop-filter: blur(8px);
+}
+
