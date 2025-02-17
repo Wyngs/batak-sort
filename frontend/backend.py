@@ -1,6 +1,7 @@
 import os
 import json
 import google.generativeai as genai
+import pandas as pd
 
 def load_all_courses():
     """Load CMPUT, STAT, and MATH courses from main_courses.json"""
@@ -50,6 +51,21 @@ def load_all_courses():
         print(f"Unexpected error: {e}")
         return []
 
+def load_gpa_data():
+    """Load GPA data from Gpa.csv"""
+    try:
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        parent_dir = os.path.dirname(current_dir)
+        csv_path = os.path.join(parent_dir, 'constants', 'Gpa.csv')
+        
+        gpa_df = pd.read_csv(csv_path)
+        # Group by Department and Course, calculate mean GPA
+        gpa_summary = gpa_df.groupby(['Department', 'Course'])['AverageGPA'].mean().reset_index()
+        return gpa_summary
+    except Exception as e:
+        print(f"Error loading GPA data: {e}")
+        return None
+
 # Configure API key securely
 genai.configure(api_key="GEMINI_API_KEY")  # Please use environment variables for API keys
 # Gemini Model Configuration
@@ -80,7 +96,7 @@ exam_schedule["data"].extend(courses)
 
 # Convert JSON into a structured text format
 def format_exam_data(json_data):
-    """Format exam data with additional course information"""
+    """Format exam data with additional course information and GPA data"""
     headers = json_data["data"][0]
     exams = json_data["data"][1:]
 
@@ -94,6 +110,9 @@ def format_exam_data(json_data):
     except Exception as e:
         print(f"Error loading course info: {e}")
         course_info = []
+
+    # Load GPA data
+    gpa_data = load_gpa_data()
 
     formatted_text = "Exam Schedule:\n"
     target_subjects = ['CMPUT', 'STAT', 'MATH']
@@ -123,6 +142,16 @@ def format_exam_data(json_data):
                         formatted_text += "\nCourse Title: " + course_data.get('course_title', 'N/A')
                         formatted_text += "\nCredits: " + course_data.get('credits', 'N/A')
                         formatted_text += "\nDescription: " + course_data.get('description', 'N/A')
+                    
+                    # Add GPA information if available
+                    if gpa_data is not None:
+                        course_gpa = gpa_data[
+                            (gpa_data['Department'] == subject) & 
+                            (gpa_data['Course'] == int(number))
+                        ]
+                        if not course_gpa.empty:
+                            avg_gpa = course_gpa['AverageGPA'].iloc[0]
+                            formatted_text += f"\nHistorical Average GPA: {avg_gpa:.2f}"
                         
                 except Exception as e:
                     print(f"Error processing course {course_code}: {e}")
