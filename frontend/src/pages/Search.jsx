@@ -232,7 +232,7 @@ export default function Finals() {
       1) Hide the header on mobile (below “md”).
          => "hidden md:table-header-group" 
     */}
-    <thead className="bg-white/40 hidden md:table-header-group">
+    <thead className="bg-white/40 hidden finaltableCollapse:table-header-group">
       <tr>
         <th className="px-4 py-3 border-b border-white/20">Course</th>
         <th className="px-4 py-3 border-b border-white/20">Section</th>
@@ -261,7 +261,7 @@ export default function Finals() {
           <tr
             key={i}
             className="
-              md:table-row
+              finaltableCollapse:table-row
               block 
               mb-4 
               md:mb-0
@@ -276,50 +276,50 @@ export default function Finals() {
               On mobile: label "Course: " 
               On desktop: it's just the cell under the header. 
             */}
-            <td className="px-4 py-2 block md:table-cell">
-              <span className="font-bold md:hidden">Course: </span>
+            <td className="px-4 py-2 block finaltableCollapse:table-cell">
+              <span className="font-bold finaltableCollapse:hidden">Course: </span>
               {row[0]}
             </td>
 
             {/* Section */}
-            <td className="px-4 py-2 block md:table-cell">
-              <span className="font-bold md:hidden">Section: </span>
+            <td className="px-4 py-2 block finaltableCollapse:table-cell">
+              <span className="font-bold finaltableCollapse:hidden">Section: </span>
               {row[1]}
             </td>
 
             {/* Date */}
-            <td className="px-4 py-2 block md:table-cell">
-              <span className="font-bold md:hidden">Date: </span>
+            <td className="px-4 py-2 block finaltableCollapse:table-cell">
+              <span className="font-bold finaltableCollapse:hidden">Date: </span>
               {row[2]}
             </td>
 
             {/* Time */}
-            <td className="px-4 py-2 block md:table-cell">
-              <span className="font-bold md:hidden">Time: </span>
+            <td className="px-4 py-2 block finaltableCollapse:table-cell">
+              <span className="font-bold finaltableCollapse:hidden">Time: </span>
               {row[3]}
             </td>
 
             {/* Length */}
-            <td className="px-4 py-2 block md:table-cell">
-              <span className="font-bold md:hidden">Length: </span>
+            <td className="px-4 py-2 block finaltableCollapse:table-cell">
+              <span className="font-bold finaltableCollapse:hidden">Length: </span>
               {row[4]}
             </td>
 
             {/* Window */}
-            <td className="px-4 py-2 block md:table-cell">
-              <span className="font-bold md:hidden">Window: </span>
+            <td className="px-4 py-2 block finaltableCollapse:table-cell">
+              <span className="font-bold finaltableCollapse:hidden">Window: </span>
               {row[5]}
             </td>
 
             {/* Location */}
-            <td className="px-4 py-2 block md:table-cell">
-              <span className="font-bold md:hidden">Location: </span>
+            <td className="px-4 py-2 block finaltableCollapse:table-cell">
+              <span className="font-bold finaltableCollapse:hidden">Location: </span>
               {row[6]}
             </td>
 
             {/* Status => Add Exam button */}
-            <td className="px-4 py-2 block md:table-cell">
-              <span className="font-bold md:hidden">Status: </span>
+            <td className="px-4 py-2 block finaltableCollapse:table-cell">
+              <span className="font-bold finaltableCollapse:hidden">Status: </span>
               <button
                onClick={() => handleToggleExam(row)}
                 className={`

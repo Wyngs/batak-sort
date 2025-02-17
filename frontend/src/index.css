@@ -28,6 +28,9 @@
   );
 }
 
+.atcb-button .atcb-button-text {
+  display: none !important;
+}
 
 
 
