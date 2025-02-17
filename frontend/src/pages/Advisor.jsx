@@ -278,7 +278,7 @@ const Advisor = () => {
               disabled={isLoading}
               className="px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
             >
-              {isLoading ? 'Sending...' : 'Send'}
+              {isLoading ? 'Thinking' : 'Send'}
             </button>
           </form>
         </div>
