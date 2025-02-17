@@ -25,13 +25,11 @@ def format_response(response_text):
     # Adjusted regex: Matches lines like "MATH 408: Computational Finance:" 
     course_pattern = re.findall(r"([A-Z]{4}\s*\d{3}):\s*(.+?)(?::|\n|$)", response_text)
     if course_pattern:
-        formatted_response = "### 📚 Course Listings\n\n"
-        formatted_response += "| Course | Title |\n"
-        formatted_response += "|--------|----------------|\n"
+        formatted_response = "📚 Course Listings\n\n"
         for course in course_pattern:
             course_code = course[0].strip()
             course_title = course[1].strip()
-            formatted_response += f"| **{course_code}** | {course_title} |\n"
+            formatted_response += f"| {course_code} | {course_title} |\n"
         return formatted_response
 
     # Process text line by line if no course listings are detected
@@ -47,9 +45,9 @@ def format_response(response_text):
             formatted_lines.append(line)
         # If the line contains a colon and starts with an uppercase letter, make it a header.
         elif ":" in line and line[0].isupper():
-            formatted_lines.append(f"### {line}")
+            formatted_lines.append(f" {line} ")
         else:
-            formatted_lines.append(f"* {line}")
+            formatted_lines.append(f" {line} ")
 
     return "\n".join(formatted_lines)
 def load_all_courses():
