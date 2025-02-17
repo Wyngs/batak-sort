@@ -7,12 +7,67 @@ const images = import.meta.glob('../assets/*.{png,jpg,jpeg,svg}', { eager: true 
 // Function to get image dynamically
 const getImage = (imageName) => images[`../assets/${imageName}`]?.default || '';
 
+// 1. Define categories + order
+const categories = [
+  {
+    name: 'Featured',
+    items: ['Gmail', 'Canvas', 'Eclass', 'Bear Tracks'],
+  },
+  {
+    name: 'Google',
+    items: ['Calendar', 'Drive'],
+  },
+  {
+    name: 'Help',
+    items: [
+      'Student Service Center',
+      'Staff Services Centre',
+      'Campus Security',
+      'Academic Success',
+      'Peer Tutors',
+      'Tutor Listing',
+    ],
+  },
+  {
+    name: 'Campus',
+    items: [
+      'BearsDen',
+      'Library',
+      'MyCCID',
+      'ONECard Account',
+      'Student Union',
+      'University Map',
+      'Events Finder',
+      'Careers',
+    ],
+  },
+  {
+    name: 'Apps@',
+    items: ['Prof Finder'],
+  },
+  {
+    name: 'Social',
+    items: ['Discord', 'Reddit', 'Instagram', 'Youtube', 'Github'],
+  },
+];
+
+// Helper to find a link's category index
+function getCategoryIndex(name) {
+  for (let i = 0; i < categories.length; i++) {
+    if (categories[i].items.includes(name)) {
+      return i;
+    }
+  }
+  return 999; // "Misc" or not found
+}
+
+// 2. Original component
 export default function Resource() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [showAll, setShowAll] = useState(false);
 
-  // Define social media links dynamically
+  // 3. Your original links array
   const socialMediaLinks = [
     { name: 'Discord', icon: <img src={getImage('discord.png')} alt="Discord" className="w-8 h-8" />, url: 'https://discord.com' },
     { name: 'Reddit', icon: <img src={getImage('Reddit.png')} alt="Reddit" className="w-8 h-8" />, url: 'https://www.reddit.com' },
@@ -42,13 +97,31 @@ export default function Resource() {
     { name: 'Tutor Listing', icon: null, url: 'https://www2.su.ualberta.ca/services/infolink/tutor/registry/browse/2/' },
   ];
 
-  // Filter social media links based on the search term
+  // 4. Filter by search
   const filteredLinks = socialMediaLinks.filter((media) =>
     media.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Determine the links to display based on the showAll state
-  const linksToDisplay = showAll ? filteredLinks : filteredLinks.slice(0, 8);
+  // 5. Sort links by category order
+  const sortedLinks = [...filteredLinks].sort((a, b) => {
+    const catA = getCategoryIndex(a.name);
+    const catB = getCategoryIndex(b.name);
+    return catA - catB;
+  });
+
+  // 6. "Show more" logic remains the same
+  const linksToDisplay = showAll ? sortedLinks : sortedLinks.slice(0, 8);
+
+  // 7. Group the final links by category for display
+  //    (only the items in `linksToDisplay`)
+  const groupedByCategory = categories.map((cat) => {
+    // All links from linksToDisplay that belong to this category
+    const catItems = linksToDisplay.filter((link) =>
+      cat.items.includes(link.name)
+    );
+    return { ...cat, items: catItems };
+  }).filter((cat) => cat.items.length > 0); 
+  // filter out empty categories
 
   return (
     <div className="min-h-screen flex flex-col bg-zinc-900 overflow-x-hidden relative">
@@ -77,7 +150,6 @@ export default function Resource() {
           opacity: 0.8,
         }}
       >
-        {/* Navbar Container */}
         <div className="max-w-full mx-auto flex items-center justify-between relative z-10">
           <div className="flex items-center">
             <img
@@ -133,10 +205,9 @@ export default function Resource() {
                 className="relative flex items-center"
                 onSubmit={(e) => {
                   e.preventDefault();
-                  // No redirect — local filtering only
+                  // local filtering only
                 }}
               >
-                {/* Search Input */}
                 <input
                   name="search"
                   type="text"
@@ -153,36 +224,46 @@ export default function Resource() {
 
       {/* Main Content */}
       <div className="pt-24 px-4">
-        {/* Social Media Grid */}
-        <div className="flex justify-center">
-          {filteredLinks.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8">
-              {linksToDisplay.map((media, index) => (
-                <a
-                  key={index}
-                  href={media.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="
-                    flex flex-col items-center justify-center
-                    bg-gray-800 rounded-lg p-6 text-white
-                    hover:bg-gray-700 transition-colors
-                  "
-                >
-                  <span className="text-4xl mb-2 transition-transform duration-300 group-hover:scale-110">
-                    {media.icon}
-                  </span>
-                  <span className="font-bold">{media.name}</span>
-                </a>
-              ))}
+        {/* 8. Display each category with its own heading & grid */}
+        {groupedByCategory.length > 0 ? (
+          groupedByCategory.map((cat) => (
+            <div key={cat.name} className="mb-8">
+              {/* Category Heading */}
+              <h2 className="text-white text-xl font-bold mb-2">
+                {cat.name}
+              </h2>
+
+              {/* Items Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8">
+                {cat.items.map((media) => (
+                  <a
+                    key={media.name}
+                    href={media.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="
+                      flex flex-col items-center justify-center
+                      bg-gray-800 rounded-lg p-6 text-white
+                      hover:bg-gray-700 transition-colors
+                    "
+                  >
+                    <span className="text-4xl mb-2 transition-transform duration-300 group-hover:scale-110">
+                      {media.icon}
+                    </span>
+                    <span className="font-bold">{media.name}</span>
+                  </a>
+                ))}
+              </div>
             </div>
-          ) : (
-            <div className="text-white text-center mt-8">
-              No results found.
-            </div>
-          )}
-        </div>
-        {filteredLinks.length > 8 && (
+          ))
+        ) : (
+          <div className="text-white text-center mt-8">
+            No results found.
+          </div>
+        )}
+
+        {/* Show More / Show Less Button */}
+        {sortedLinks.length > 8 && (
           <div className="flex justify-center mt-4">
             <button
               onClick={() => setShowAll(!showAll)}
