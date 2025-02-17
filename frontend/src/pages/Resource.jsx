@@ -10,12 +10,20 @@ const getImage = (imageName) => images[`../assets/${imageName}`]?.default || '';
 // 1. Define categories + order
 const categories = [
   {
-    name: 'Featured',
-    items: ['Gmail', 'Canvas', 'Eclass', 'Bear Tracks'],
+    name: 'Social',
+    items: ['Discord', 'Reddit', 'Github'],
+  },
+  {
+    name: 'Apps@',
+    items: ['Prof Finder'],
   },
   {
     name: 'Google',
     items: ['Calendar', 'Drive'],
+  },
+  {
+    name: 'Featured',
+    items: ['Gmail', 'Canvas', 'Eclass', 'Bear Tracks'],
   },
   {
     name: 'Help',
@@ -40,15 +48,7 @@ const categories = [
       'Events Finder',
       'Careers',
     ],
-  },
-  {
-    name: 'Apps@',
-    items: ['Prof Finder'],
-  },
-  {
-    name: 'Social',
-    items: ['Discord', 'Reddit', 'Instagram', 'Youtube', 'Github'],
-  },
+  }
 ];
 
 // Helper to find a link's category index
@@ -71,8 +71,6 @@ export default function Resource() {
   const socialMediaLinks = [
     { name: 'Discord', icon: <img src={getImage('discord.png')} alt="Discord" className="w-8 h-8" />, url: 'https://discord.com' },
     { name: 'Reddit', icon: <img src={getImage('Reddit.png')} alt="Reddit" className="w-8 h-8" />, url: 'https://www.reddit.com' },
-    { name: 'Instagram', icon: <img src={getImage('instagram.png')} alt="Instagram" className="w-8 h-8" />, url: 'https://www.instagram.com' },
-    { name: 'Youtube', icon: <img src={getImage('youtube.png')} alt="Youtube" className="w-8 h-8" />, url: 'https://www.youtube.com' },
     { name: 'Github', icon: <img src={getImage('github.png')} alt="Github" className="w-8 h-8" />, url: 'https://www.github.com' },
     { name: 'Gmail', icon: <img src={getImage('gmail.png')} alt="Gmail" className="w-8 h-8" />, url: 'https://apps.ualberta.ca/' },
     { name: 'Eclass', icon: <img src={getImage('gmail.png')} alt="Eclass" className="w-8 h-8" />, url: 'https://eclass.srv.ualberta.ca/portal/' },
