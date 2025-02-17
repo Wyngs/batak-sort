@@ -1,30 +1,16 @@
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
-// Dynamically import all images from `src/assets/`
+// Dynamically import all images
 const images = import.meta.glob('../assets/*.{png,jpg,jpeg,svg}', { eager: true });
-
-// Function to get image dynamically
 const getImage = (imageName) => images[`../assets/${imageName}`]?.default || '';
 
-// 1. Define categories + order
+// Categories
 const categories = [
-  {
-    name: 'Social',
-    items: ['Discord', 'Reddit', 'Github'],
-  },
-  {
-    name: 'Apps@',
-    items: ['Prof Finder'],
-  },
-  {
-    name: 'Google',
-    items: ['Calendar', 'Drive'],
-  },
-  {
-    name: 'Featured',
-    items: ['Gmail', 'Canvas', 'Eclass', 'Bear Tracks'],
-  },
+  { name: 'Social', items: ['Discord', 'Reddit', 'Github'] },
+  { name: 'Apps@', items: ['Prof Finder'] },
+  { name: 'Google', items: ['Calendar', 'Drive'] },
+  { name: 'Featured', items: ['Gmail', 'Canvas', 'Eclass', 'Bear Tracks'] },
   {
     name: 'Help',
     items: [
@@ -48,229 +34,347 @@ const categories = [
       'Events Finder',
       'Careers',
     ],
-  }
+  },
 ];
 
-// Helper to find a link's category index
+// Finds the category index of a given name
 function getCategoryIndex(name) {
   for (let i = 0; i < categories.length; i++) {
     if (categories[i].items.includes(name)) {
       return i;
     }
   }
-  return 999; // "Misc" or not found
+  return 999;
 }
 
-// 2. Original component
+// Resource Links
+const socialMediaLinks = [
+  { name: 'Discord', icon: <img src={getImage('discord.svg')} alt="Discord" className="w-12 h-12" />, url: 'https://discord.com' },
+  { name: 'Reddit', icon: <img src={getImage('Reddit.png')} alt="Reddit" className="w-12 h-12" />, url: 'https://www.reddit.com' },
+  { name: 'Github', icon: <img src={getImage('github.png')} alt="Github" className="w-12 h-12" />, url: 'https://www.github.com' },
+  { name: 'Prof Finder', icon: <img src={getImage('magnifying-glass.png')} alt="Prof Finder" className="w-12 h-12" />, url: 'https://apps.ualberta.ca/directory' },
+  { name: 'Calendar', icon: <img src={getImage('google-calendar.png')} alt="Calendar" className="w-12 h-12" />, url: 'https://calendar.google.com/a/ualberta.ca/' },
+  { name: 'Drive', icon: <img src={getImage('google-drive.png')} alt="Drive" className="w-12 h-12" />, url: 'https://drive.google.com/a/ualberta.ca/' },
+  { name: 'Gmail', icon: <img src={getImage('gmail.png')} alt="Gmail" className="w-12 h-12" />, url: 'https://apps.ualberta.ca/' },
+  { name: 'Canvas', icon: <img src={getImage('canvas.png')} alt="Canvas" className="w-12 h-12" />, url: 'https://canvas.ualberta.ca/' },
+  { name: 'Eclass', icon: <img src={getImage('eclass.png')} alt="Eclass" className="w-12 h-12" />, url: 'https://eclass.srv.ualberta.ca/portal/' },
+  { name: 'Bear Tracks', icon: <img src={getImage('beartracks.png')} alt="Bear Tracks" className="w-12 h-12" />, url: 'https://www.beartracks.ualberta.ca/' },
+  { name: 'Library', icon: <img src={getImage('library.png')} alt="Library" className="w-12 h-12" />, url: 'https://www.library.ualberta.ca/' },
+
+  // Items with no custom icon => fallback to bigger Gmail icon
+  { name: 'Student Service Center',icon: <img src={getImage('ua.png')} alt="Student Service Center" className="w-12 h-12" />, url: 'https://www.ualberta.ca/en/services/student-service-centre/index.html' },
+  { name: 'Staff Services Centre',icon: <img src={getImage('ua.png')} alt="Staff Services Centre" className="w-12 h-12" />, url: 'https://www.ualberta.ca/en/services/staff-service-centre/index.html' },
+  { name: 'Campus Security',icon: <img src={getImage('ua.png')} alt="Campus Security" className="w-12 h-12" />, url: 'https://www.ualberta.ca/en/campus-life/campus-security.html' },
+  { name: 'Academic Success',icon: <img src={getImage('ua.png')} alt="Academic Success" className="w-12 h-12" />, url: 'https://www.ualberta.ca/en/campus-life/academic-success/index.html' },
+  { name: 'Peer Tutors',icon: <img src={getImage('ua.png')} alt="Peer Tutors" className="w-12 h-12" />, url: 'https://www.ualberta.ca/en/residence/community-life/academic-support/peer-tutors.html' },
+  { name: 'Tutor Listing',icon: <img src={getImage('tutor.png')} alt="Tutor Listing" className="w-12 h-12" />, url: 'https://www2.su.ualberta.ca/services/infolink/tutor/registry/browse/2/' },
+  { name: 'BearsDen',icon: <img src={getImage('ua.png')} alt="BearsDen" className="w-12 h-12" />, url: 'https://alberta.campuslabs.ca/engage/' },
+  { name: 'MyCCID',icon: <img src={getImage('ua.png')} alt="MyCCID" className="w-12 h-12" />, url: 'https://www.ualberta.ca/en/onecard/index.html' },
+  { name: 'ONECard Account',icon: <img src={getImage('ua.png')} alt="ONECard Account" className="w-12 h-12" />, url: 'https://www.ualberta.ca/en/onecard/index.html' },
+  { name: 'Student Union',icon: <img src={getImage('ua.png')} alt="Student Union" className="w-12 h-12" />, url: 'https://www.su.ualberta.ca/' },
+  { name: 'Uni Map',icon: <img src={getImage('ua.png')} alt="Uni Map" className="w-12 h-12" />, url: 'https://www.ualberta.ca/maps.html' },
+  { name: 'Events Finder',icon: <img src={getImage('ua.png')} alt="Events Finder" className="w-12 h-12" />, url: 'https://www.ualberta.ca/events/index.html' },
+  { name: 'Careers',icon: <img src={getImage('ua.png')} alt="Careers" className="w-12 h-12" />, url: 'https://www.ualberta.ca/en/careers.html' },
+];
+
+const sortedLinks = [...socialMediaLinks].sort((a, b) => {
+  const catA = getCategoryIndex(a.name);
+  const catB = getCategoryIndex(b.name);
+  return catA - catB;
+});
+
 export default function Resource() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [showAll, setShowAll] = useState(false);
 
-  // 3. Your original links array
-  const socialMediaLinks = [
-    { name: 'Discord', icon: <img src={getImage('discord.png')} alt="Discord" className="w-8 h-8" />, url: 'https://discord.com' },
-    { name: 'Reddit', icon: <img src={getImage('Reddit.png')} alt="Reddit" className="w-8 h-8" />, url: 'https://www.reddit.com' },
-    { name: 'Github', icon: <img src={getImage('github.png')} alt="Github" className="w-8 h-8" />, url: 'https://www.github.com' },
-    { name: 'Gmail', icon: <img src={getImage('gmail.png')} alt="Gmail" className="w-8 h-8" />, url: 'https://apps.ualberta.ca/' },
-    { name: 'Eclass', icon: <img src={getImage('eclass.png')} alt="Eclass" className="w-8 h-8" />, url: 'https://eclass.srv.ualberta.ca/portal/' },
-    { name: 'Bear Tracks', icon: <img src={getImage('beartracks.png')} alt="Bear Tracks" className="w-8 h-8" />, url: 'https://www.beartracks.ualberta.ca/' },
-    { name: 'Canvas', icon: <img src={getImage('canvas.png')} alt="Canvas" className="w-8 h-8" />, url: 'https://canvas.ualberta.ca/' },
-    { name: 'Library', icon: <img src={getImage('library.png')} alt="Library" className="w-8 h-8" />, url: 'https://www.library.ualberta.ca/' },
-    { name: 'Prof Finder', icon: <img src={getImage('magnifying-glass.png')} alt="Prof Finder" className="w-8 h-8" />, url: 'https://apps.ualberta.ca/directory' },
-    { name: 'Events Finder', icon: <img src={getImage('upcoming-events.png')} alt="Prof Finder" className="w-8 h-8" />, url: 'https://www.ualberta.ca/events/index.html' },
-    { name: 'Uni Map', icon: <img src={getImage('maps.png')} alt="Uni Map" className="w-8 h-8" />, url: 'https://www.ualberta.ca/maps.html' },
-    { name: 'Careers', icon: <img src={getImage('careers.png')} alt="Careers" className="w-8 h-8" />, url: 'https://www.ualberta.ca/en/careers.html' },
-    { name: 'Student Union', icon: null, url: 'https://www.su.ualberta.ca/' },
-    { name: 'Academic Success', icon: null, url: 'https://www.ualberta.ca/en/campus-life/academic-success/index.html' },
-    { name: 'BearsDen', icon: null, url: 'https://alberta.campuslabs.ca/engage/' },
-    { name: 'Calendar', icon: <img src={getImage('google-calendar.png')} alt="Google Calendar" className="w-8 h-8" />, url: 'https://calendar.google.com/a/ualberta.ca/' },
-    { name: 'Drive', icon: <img src={getImage('google-drive.png')} alt="Drive" className="w-8 h-8" />, url: 'https://drive.google.com/a/ualberta.ca/' },
-    { name: 'Student Service Center', icon: null, url: 'https://www.ualberta.ca/en/services/student-service-centre/index.html' },
-    { name: 'Staff Services Centre', icon: null, url: 'https://www.ualberta.ca/en/services/staff-service-centre/index.html' },
-    { name: 'Campus Security', icon: null, url: 'https://www.ualberta.ca/en/campus-life/campus-security.html' },
-    { name: 'ONECard Account', icon: null, url: 'https://www.ualberta.ca/en/onecard/index.html' },
-    { name: 'MyCCID', icon: null, url: 'https://myccid.ualberta.ca/' },
-    { name: 'Peer Tutors', icon: null, url: 'https://www.ualberta.ca/en/residence/community-life/academic-support/peer-tutors.html' },
-    { name: 'Tutor Listing', icon: <img src={getImage('tutor-list.png')} alt="Tutor Listing" className="w-8 h-8" />, url: 'https://www2.su.ualberta.ca/services/infolink/tutor/registry/browse/2/' },
-  ];
+  // Close mobile nav on resize
+  useEffect(() => {
+    function handleResize() {
+      if (window.innerWidth >= 1024) {
+        setIsMenuOpen(false);
+      }
+    }
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-  // 4. Filter by search
-  const filteredLinks = socialMediaLinks.filter((media) =>
+  const location = useLocation();
+
+  // Filter
+  const filteredLinks = sortedLinks.filter((media) =>
     media.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // 5. Sort links by category order
-  const sortedLinks = [...filteredLinks].sort((a, b) => {
-    const catA = getCategoryIndex(a.name);
-    const catB = getCategoryIndex(b.name);
-    return catA - catB;
-  });
-
-  // 6. "Show more" logic remains the same
-  const linksToDisplay = showAll ? sortedLinks : sortedLinks.slice(0, 8);
-
-  // 7. Group the final links by category for display
-  //    (only the items in `linksToDisplay`)
-  const groupedByCategory = categories.map((cat) => {
-    // All links from linksToDisplay that belong to this category
-    const catItems = linksToDisplay.filter((link) =>
-      cat.items.includes(link.name)
-    );
-    return { ...cat, items: catItems };
-  }).filter((cat) => cat.items.length > 0); 
-  // filter out empty categories
+  // Show 6 or all
+  const itemsToDisplay = showAll ? filteredLinks : filteredLinks.slice(0, 6);
 
   return (
-    <div className="min-h-screen flex flex-col bg-zinc-900 overflow-x-hidden relative">
-      {/* Background Overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: `
-            radial-gradient(circle, rgba(34,197,94,0.3) 0%, rgba(34,197,94,0.1) 70%, transparent 100%),
-            url('https://www.transparenttextures.com/patterns/noisy.png')
-          `,
-          backgroundBlendMode: 'overlay',
-          opacity: 0.8,
-        }}
-      />
+    <div className="relative min-h-screen flex flex-col text-white font-apple overflow-hidden">
+      {/* Background & Blobs */}
+      <div className="absolute inset-0 -z-10">
+        <div className="h-full w-full bg-gradient-to-b from-[#004022] to-[#001a0f] relative overflow-hidden">
+          <div className="blobs-container h-full w-full absolute inset-0 pointer-events-none">
+            <div className="blob blob1 bg-yellow-400 opacity-70 mix-blend-screen" />
+            <div className="blob blob2 bg-yellow-400 opacity-60 mix-blend-screen" />
+            <div className="blob blob3 bg-yellow-400 opacity-50 mix-blend-screen" />
+            <div className="blob blob4 bg-yellow-400 opacity-70 mix-blend-screen" />
+            <div className="blob blob5 bg-yellow-400 opacity-60 mix-blend-screen" />
+            <div className="blob blob6 bg-yellow-400 opacity-50 mix-blend-screen" />
+            <div className="blob blob7 bg-yellow-400 opacity-70 mix-blend-screen" />
+            <div className="blob blob8 bg-yellow-400 opacity-60 mix-blend-screen" />
+          </div>
+        </div>
+      </div>
 
-      {/* Navbar */}
-      <nav
-        className="w-full text-yellow-300 px-4 md:px-20 py-4 fixed top-0 left-0 z-50 backdrop-blur-lg"
-        style={{
-          backgroundImage: `
-            radial-gradient(ellipse, rgba(237, 244, 244, 0.3) 0%, rgba(93, 95, 95, 0.1) 70%, transparent 100%),
-            url('https://www.transparenttextures.com/patterns/noisy.png')
-          `,
-          backgroundBlendMode: 'overlay',
-          opacity: 0.8,
-        }}
-      >
-        <div className="max-w-full mx-auto flex items-center justify-between relative z-10">
-          <div className="flex items-center">
+      {/* NAVBAR */}
+      <nav className="w-full top-0 left-0 z-50 bg-transparent py-4">
+        <div className="max-w-6xl mx-auto px-4 lg:px-8 flex items-center justify-between">
+          {/* Brand */}
+          <div className="flex items-center space-x-3">
             <img
               src={getImage('UofAlogo.png')}
               alt="UofA Logo"
-              className="w-8 h-8 md:w-9 md:h-9 mr-4"
+              className="w-10 h-10 object-contain"
             />
-            <Link to="/">
-              <span className="font-bold text-2xl md:text-xl">
-                BearSmart
-              </span>
-            </Link>
+            <span className="font-bold text-2xl lg:text-3xl">BearSmart</span>
           </div>
 
-          {/* Desktop navigation */}
-          <div className="hidden md:flex items-center space-x-6">
-            <span>
-              <Link
-                to="/"
-                className="hover:text-yellow-500 font-bold text-base transition duration-200"
+          {/* Desktop Links */}
+          <div className="hidden lg:flex items-center space-x-8 font-semibold text-white">
+            <Link to="/" className="hover:text-yellow-100 transition">
+              Home
+            </Link>
+            <Link
+              to="/search"
+              className={`transition ${
+                location.pathname === '/search' ? 'text-yellow-200' : 'hover:text-yellow-100'
+              }`}
+            >
+              Finals
+            </Link>
+            <Link to="/calendar" className="hover:text-yellow-100 transition">
+              Calendar
+            </Link>
+            <Link to="/advisor" className="hover:text-yellow-100 transition">
+              Advisor
+            </Link>
+
+            {/* Desktop Search */}
+            <form
+              className="relative"
+              onSubmit={(e) => e.preventDefault()}
+            >
+              <input
+                name="search"
+                type="text"
+                placeholder="Search Resource..."
+                className="rounded-full pl-4 pr-20 py-1 text-black placeholder-gray-600 focus:outline-none"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <button
+                type="submit"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-600 hover:text-black"
               >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M21 21l-4.35-4.35" />
+                  <circle cx="10" cy="10" r="7" />
+                </svg>
+              </button>
+            </form>
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="lg:hidden focus:outline-none"
+          >
+            <svg
+              className="w-7 h-7"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <div className="lg:hidden mt-2 bg-white/10 backdrop-blur-sm rounded p-4 max-w-6xl mx-auto">
+            <div className="flex flex-col space-y-3 font-semibold">
+              <Link to="/" onClick={() => setIsMenuOpen(false)}>
                 Home
               </Link>
-            </span>
-            <span>
-              <Link
-                to="/search"
-                className="font-bold text-base hover:text-yellow-500 transition duration-200"
-              >
-                Search
+              <Link to="/search" onClick={() => setIsMenuOpen(false)}>
+                Finals
               </Link>
-            </span>
-            <span>
-              <Link
-                to="/calendar"
-                className="hover:text-yellow-500 font-bold text-base transition duration-200"
-              >
+              <Link to="/calendar" onClick={() => setIsMenuOpen(false)}>
                 Calendar
               </Link>
-            </span>
-            <span>
-              <Link
-                to="/advisor"
-                className="hover:text-yellow-500 font-bold text-base transition duration-200"
-              >
+              <Link to="/advisor" onClick={() => setIsMenuOpen(false)}>
                 Advisor
               </Link>
-            </span>
-
-            {/* Search Bar */}
-            <span>
-              <form
-                className="relative flex items-center"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  // local filtering only
-                }}
-              >
-                <input
-                  name="search"
-                  type="text"
-                  placeholder="Search for a Resource..."
-                  className="text-black px-4 py-2 w-64 pr-10 rounded-xl bg-white/80 placeholder-gray-800"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </form>
-            </span>
+            </div>
           </div>
-        </div>
+        )}
       </nav>
 
-      {/* Main Content */}
-      <div className="pt-24 px-4">
-        {/* 8. Display each category with its own heading & grid */}
-        {groupedByCategory.length > 0 ? (
-          groupedByCategory.map((cat) => (
-            <div key={cat.name} className="mb-8">
-              {/* Category Heading */}
-              <h2 className="text-white text-xl font-bold mb-2">
-                {cat.name}
-              </h2>
+      {/* MAIN CONTENT */}
+      <div className="pt-24 px-4 md:px-20 pb-12">
+        {/* Mobile Search */}
+        <div className="mb-6 lg:hidden">
+          <form className="relative" onSubmit={(e) => e.preventDefault()}>
+            <input
+              name="search"
+              type="text"
+              placeholder="Search Resource..."
+              className="rounded-full pl-4 pr-20 py-1 text-black placeholder-gray-600 focus:outline-none w-full"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <button
+              type="submit"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-600 hover:text-black"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M21 21l-4.35-4.35" />
+                <circle cx="10" cy="10" r="7" />
+              </svg>
+            </button>
+          </form>
+        </div>
 
-              {/* Items Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8">
-                {cat.items.map((media) => (
-                  <a
-                    key={media.name}
-                    href={media.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
+        {/* Card Grid */}
+        <div className="max-w-6xl mx-auto">
+          <div
+            className="
+              grid
+              grid-cols-1
+              sm:grid-cols-2
+              lg:grid-cols-3
+              gap-8
+              w-full
+              items-start
+              justify-items-center
+            "
+          >
+            {itemsToDisplay.map((media) => {
+              // Fallback icon => bigger Gmail icon
+              const icon = media.icon ? (
+                media.icon
+              ) : (
+                <img
+                  src={getImage('gmail.png')}
+                  alt="Gmail"
+                  className="w-12 h-12"
+                />
+              );
+
+              return (
+                <a
+                  key={media.name}
+                  href={media.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="
+                    group
+                    relative
+                    w-full
+                    max-w-[300px]
+                    min-h-[320px]
+                    bg-white/15
+                    backdrop-blur-md
+                    rounded-[1.5rem]
+                    flex
+                    flex-col
+                    items-center
+                    justify-center
+                    text-white
+                    p-6
+                    shadow-lg
+                    transition
+                    hover:bg-white/20
+                  "
+                  style={{ textDecoration: 'none' }}
+                >
+                  {/* Circle-float-trigger => entire circle + icon float on hover */}
+                  <div
                     className="
-                      flex flex-col items-center justify-center
-                      bg-gray-800 rounded-lg p-6 text-white
-                      hover:bg-gray-700 transition-colors
+                      circle-float-trigger
+                      w-28
+                      h-28
+                      rounded-full
+                      bg-white
+                      flex
+                      items-center
+                      justify-center
+                      mb-6
+                      transition-all
+                      duration-300
                     "
                   >
-                    <span className="text-4xl mb-2 transition-transform duration-300 group-hover:scale-110">
-                      {media.icon}
-                    </span>
-                    <span className="font-bold">{media.name}</span>
-                  </a>
-                ))}
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="text-white text-center mt-8">
-            No results found.
-          </div>
-        )}
+                    {icon}
+                  </div>
 
-        {/* Show More / Show Less Button */}
-        {sortedLinks.length > 8 && (
-          <div className="flex justify-center mt-4">
-            <button
-              onClick={() => setShowAll(!showAll)}
-              className="bg-yellow-500 text-black px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors"
-            >
-              {showAll ? 'Show Less' : 'Show More'}
-            </button>
+                  {/* Resource name */}
+                  <div className="text-xl font-semibold tracking-wide mb-1">
+                    {media.name}
+                  </div>
+
+                  {/* The float animation triggers on the entire circle */}
+                  <style>{`
+                    .group:hover .circle-float-trigger {
+                      animation: float-up-down 3.5s ease-in-out infinite;
+                    }
+                  `}</style>
+                </a>
+              );
+            })}
           </div>
-        )}
+
+          {/* Show More / Show Less button */}
+          {filteredLinks.length > 6 && (
+            <div className="flex justify-center mt-6">
+              {!showAll ? (
+                <button
+                  onClick={() => setShowAll(true)}
+                  className="bg-yellow-500 text-black px-10 py-3 rounded-md font-semibold transition-colors hover:bg-yellow-600"
+                >
+                  Show More
+                </button>
+              ) : (
+                <button
+                  onClick={() => setShowAll(false)}
+                  className="bg-yellow-500 text-black px-10 py-3 rounded-md font-semibold transition-colors hover:bg-yellow-600"
+                >
+                  Show Less
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

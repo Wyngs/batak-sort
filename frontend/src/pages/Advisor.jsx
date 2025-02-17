@@ -95,6 +95,9 @@ const Advisor = () => {
 
           {/* Desktop Menu */}
           <div className="hidden lg:flex items-center space-x-8 font-semibold text-white">
+          <Link to="/" className="hover:text-yellow-100 transition">
+              Home
+            </Link>
             <Link
               to="/search"
               className={`transition ${
@@ -111,47 +114,8 @@ const Advisor = () => {
             <Link to="/resource" className="hover:text-yellow-100 transition">
               Resource
             </Link>
-            <Link to="/" className="hover:text-yellow-100 transition">
-              Home
-            </Link>
+            
 
-            {/* Optional: Search form in the navbar */}
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const searchQuery = e.target.elements.search.value.trim();
-                if (searchQuery) {
-                  window.location.href = `/search?course=${encodeURIComponent(
-                    searchQuery
-                  )}`;
-                }
-              }}
-              className="relative"
-            >
-              <input
-                type="text"
-                name="search"
-                placeholder="Search finals..."
-                className="rounded-full pl-4 pr-20 py-1 text-black placeholder-gray-600 focus:outline-none"
-              />
-              <button
-                type="submit"
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-600 hover:text-black"
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M21 21l-4.35-4.35"></path>
-                  <circle cx="10" cy="10" r="7"></circle>
-                </svg>
-              </button>
-            </form>
           </div>
 
           {/* Mobile Menu Button */}
