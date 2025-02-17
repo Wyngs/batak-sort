@@ -149,6 +149,13 @@ export default function Search() {
                   Calendar
                 </Link>
                 <Link 
+                  to="/advisor" 
+                  className="block py-2 text-center text-yellow-300 hover:bg-green-900 rounded transition duration-200"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Advisor
+                </Link>
+                <Link 
                   to="/resource" 
                   className="block py-2 text-center text-yellow-300 hover:bg-green-900 rounded transition duration-200"
                   onClick={() => setIsMenuOpen(false)}
