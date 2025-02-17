@@ -49,8 +49,8 @@ function getCategoryIndex(name) {
 
 // Resource Links
 const socialMediaLinks = [
-  { name: 'Discord', icon: <img src={getImage('discord.svg')} alt="Discord" className="w-12 h-12" />, url: 'https://discord.com' },
-  { name: 'Reddit', icon: <img src={getImage('Reddit.png')} alt="Reddit" className="w-12 h-12" />, url: 'https://www.reddit.com' },
+  { name: 'Discord', icon: <img src={getImage('discord.svg')} alt="Discord" className="w-12 h-12" />, url: 'https://discord.com/invite/ualberta-727246296406032477' },
+  { name: 'Reddit', icon: <img src={getImage('Reddit.png')} alt="Reddit" className="w-12 h-12" />, url: 'https://www.reddit.com/r/uAlberta/?rdt=51734' },
   { name: 'Github', icon: <img src={getImage('github.png')} alt="Github" className="w-12 h-12" />, url: 'https://www.github.com' },
   { name: 'Prof Finder', icon: <img src={getImage('magnifying-glass.png')} alt="Prof Finder" className="w-12 h-12" />, url: 'https://apps.ualberta.ca/directory' },
   { name: 'Calendar', icon: <img src={getImage('google-calendar.png')} alt="Calendar" className="w-12 h-12" />, url: 'https://calendar.google.com/a/ualberta.ca/' },
