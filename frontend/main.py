@@ -51,7 +51,7 @@ def load_all_courses():
         return []
 
 # Configure API key securely
-genai.configure(api_key="GEMINI_API_KEY")  # Please use environment variables for API keys
+genai.configure(api_key="AIzaSyC2KRkm21mCGMYHXZZSoHXBe-B93KGZesw")  # Please use environment variables for API keys
 # Gemini Model Configuration
 generation_config = {
     "temperature": 0.7,

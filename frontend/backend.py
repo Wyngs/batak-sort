@@ -29,7 +29,7 @@ def format_response(response_text):
         for course in course_pattern:
             course_code = course[0].strip()
             course_title = course[1].strip()
-            formatted_response += f"| {course_code} | {course_title} |\n"
+            formatted_response += f" {course_code}  {course_title} \n"
         return formatted_response
 
     # Process text line by line if no course listings are detected
@@ -102,7 +102,7 @@ def load_gpa_data():
         return None
 
 # IMPORTANT: Use environment variables to securely manage your API key.
-genai.configure(api_key=os.environ.get("GEMINI_API_KEY", "YOUR_GEMINI_API_KEY"))
+genai.configure(api_key="AIzaSyC2KRkm21mCGMYHXZZSoHXBe-B93KGZesw")
 generation_config = {
     "temperature": 0.7,
     "top_p": 0.95,

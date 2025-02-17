@@ -1,3 +1,19 @@
 {
-    "conversations": []
+    "conversations": [
+        {
+            "timestamp": "2025-02-17T05:39:50.613613",
+            "user_message": "what did we talk about ",
+            "bot_response": " There is no record of previous conversations in the provided context.  Therefore, I cannot tell you what we talked about previously. "
+        },
+        {
+            "timestamp": "2025-02-17T05:40:49.557555",
+            "user_message": "list all the 100 level cmput courses",
+            "bot_response": "### \ud83d\udcda CMPUT 100-Level Course Listings\n | Course | Title                     | \n |--------|-----------------------------| \n | CMPUT 101 | Introduction to Computing | \n | CMPUT 174 | Introduction to the Foundations of Computation I | \n | CMPUT 175 | Introduction to the Foundations of Computation II | \n | CMPUT 191 | Introduction to Data Science | \n | CMPUT 195 | Introduction to Principles and Techniques of Data Science | "
+        },
+        {
+            "timestamp": "2025-02-17T05:46:08.011370",
+            "user_message": "what are 100 level CS courses I can take ?",
+            "bot_response": "\ud83d\udcda Course Listings\n\n MPUT 101  Introduction to Computing \n MPUT 174  Introduction to the Foundations of Computation I \n MPUT 175  Introduction to the Foundations of Computation II \n MPUT 191  Introduction to Data Science \n MPUT 195  Introduction to Principles and Techniques of Data Science \n"
+        }
+    ]
 }
