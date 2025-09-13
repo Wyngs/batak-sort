@@ -257,7 +257,9 @@ export default function Calendar() {
             <Link to="/resource" className="hover:text-yellow-100 transition">
               Resource
             </Link>
-            
+            <Link to="/advisor" className="hover:text-yellow-100 transition">
+              Advisor
+            </Link>
           </div>
 
           <button
@@ -296,7 +298,9 @@ export default function Calendar() {
               <Link to="/resource" onClick={() => setIsMenuOpen(false)}>
                 Resource
               </Link>
-              
+              <Link to="/advisor" onClick={() => setIsMenuOpen(false)}>
+                Advisor
+              </Link>
             </div>
           </div>
         )}

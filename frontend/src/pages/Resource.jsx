@@ -156,7 +156,9 @@ export default function Resource() {
             <Link to="/calendar" className="hover:text-yellow-100 transition">
               Calendar
             </Link>
-            
+            <Link to="/advisor" className="hover:text-yellow-100 transition">
+              Advisor
+            </Link>
 
             {/* Desktop Search */}
             <form
@@ -223,7 +225,9 @@ export default function Resource() {
               <Link to="/calendar" onClick={() => setIsMenuOpen(false)}>
                 Calendar
               </Link>
-              
+              <Link to="/advisor" onClick={() => setIsMenuOpen(false)}>
+                Advisor
+              </Link>
             </div>
           </div>
         )}
