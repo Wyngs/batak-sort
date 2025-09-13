@@ -52,9 +52,7 @@ const Home = () => {
             <Link to="/resource" className="hover:text-yellow-100 transition">
               Resource
             </Link>
-            <Link to="/advisor" className="hover:text-yellow-100 transition">
-              Advisor
-            </Link>
+            
 
             
           </div>
@@ -96,9 +94,7 @@ const Home = () => {
               <Link to="/resource" className="hover:text-yellow-100 transition" onClick={() => setIsMenuOpen(false)}>
                 Resource
               </Link>
-              <Link to="/advisor" className="hover:text-yellow-100 transition" onClick={() => setIsMenuOpen(false)}>
-                Advisor
-              </Link>
+              
             </div>
           </div>
         )}
@@ -116,7 +112,7 @@ const Home = () => {
             <p className="text-lg md:text-xl max-w-xl">
               Join thousands of UAlberta students who trust BearSmart for effortless academic planning and success!
             </p>
-            <Link to="/advisor">
+            <Link to="/search">
               <button className="mt-4 arrow-button px-9 py-3 rounded-md bg-black font-semibold transition relative">
                 Get started
               </button>
