@@ -112,7 +112,7 @@ const Home = () => {
             <p className="text-lg md:text-xl max-w-xl">
               Join thousands of UAlberta students who trust BearSmart for effortless academic planning and success!
             </p>
-            <Link to="/advisor">
+            <Link to="/search">
               <button className="mt-4 arrow-button px-9 py-3 rounded-md bg-black font-semibold transition relative">
                 Get started
               </button>
