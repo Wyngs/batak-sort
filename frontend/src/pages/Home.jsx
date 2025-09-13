@@ -52,9 +52,7 @@ const Home = () => {
             <Link to="/resource" className="hover:text-yellow-100 transition">
               Resource
             </Link>
-            <Link to="/advisor" className="hover:text-yellow-100 transition">
-              Advisor
-            </Link>
+            
 
             
           </div>
@@ -96,9 +94,7 @@ const Home = () => {
               <Link to="/resource" className="hover:text-yellow-100 transition" onClick={() => setIsMenuOpen(false)}>
                 Resource
               </Link>
-              <Link to="/advisor" className="hover:text-yellow-100 transition" onClick={() => setIsMenuOpen(false)}>
-                Advisor
-              </Link>
+              
             </div>
           </div>
         )}
